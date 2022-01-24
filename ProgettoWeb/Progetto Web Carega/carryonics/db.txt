@@ -1,0 +1,160 @@
+create table users(
+    email varchar(30) not null primary key,
+    pass varchar(30) not null,
+    name varchar(20) not null,
+    surname varchar(30) not null,
+    address varchar(50) not null,
+    civic varchar(4) not null,
+    postcode int(5) not null,
+    city varchar(50) not null,
+    credit_num int(16) not null,
+    exp_date_month int(2) not null,
+    exp_date_year int(2) not null,
+    sec_code int(3) not null
+    );
+
+CREATE TABLE products(
+    id INT(11) NOT NULL AUTO_INCREMENT PRIMARY key,
+    NAME VARCHAR(100) NOT NULL,
+    photo LONGBLOB NOT NULL,
+    description text not null,
+    category varchar(10) not null,
+    amount int(3) not null,
+    genre varchar(20),
+    release_date date not null
+);
+
+create table deliveries(
+    id int(11) not null AUTO_INCREMENT primary key,
+    name varchar(20) not null,
+    courier varchar(20) not null,
+    price float(4,2) not null,
+    delivering int(1) not null
+    );
+
+create table orders(
+    id int(11) not null AUTO_INCREMENT primary key,
+    del_date date
+    );
+
+create table bookings(
+    id int(11) not null AUTO_INCREMENT Primary key,
+    availability date
+    );
+
+CREATE TABLE reviews(
+    site_user VARCHAR(30) NOT NULL,
+    FOREIGN KEY(site_user) REFERENCES users(email) ON UPDATE CASCADE,
+    product INT(11) NOT NULL,
+    FOREIGN KEY(product) REFERENCES products(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    points INT(1) NOT NULL,
+    rev_text TEXT NOT NULL,
+    PRIMARY KEY(site_user, product)
+);
+
+create table books(
+    product int(11) not null PRIMARY key,
+    foreign key(product) references products(id),
+    author varchar(40) not null,
+    publisher varchar(30) not null,
+    isbn char(13) not null,
+    pages int(4) not null,
+    comic BINARY(1) not null
+    );
+
+create table cds(
+    product int(11) not null PRIMARY key,
+    foreign key(product) references products(id),
+    author varchar(40) not null,
+    format enum("CD","VINIL") DEFAULT "CD"
+    );
+
+create table vinils(
+    product int(11) not null PRIMARY key,
+    foreign key(product) references products(id),
+    author varchar(40) not null,
+    format enum("CD","VINIL") DEFAULT "CD"
+    );
+
+create table songs(
+    id int(11) not null auto_increment primary key,
+    name varchar(50) not null,
+    duration float(4,2) not null 
+);
+
+create table actors(
+    id int(11) not null auto_increment PRIMARY key,
+    name varchar(50) not null,
+    surname varchar(20) not null 
+);
+
+create table games(
+    product int(11) not null PRIMARY key,
+    foreign key(product) references products(id),
+    developer varchar(40) not null,
+    publisher varchar(40) not null,
+    pegi enum("3","7","12","16","18") DEFAULT "3"
+    );
+
+create table films(
+    product int(11) not null PRIMARY key,
+    foreign key(product) references products(id),
+    director varchar(40) not null,
+    producer varchar(40) not null  
+    );
+
+create table user_order(
+    	site_user varchar(30) not null,
+    	foreign key(site_user) REFERENCES users(email) on delete CASCADE on UPDATE CASCADE,
+        site_order int(11) not null,
+    	foreign key(site_order) REFERENCES orders(id) on delete CASCADE on UPDATE CASCADE,
+    	PRIMARY key(site_user,site_order)
+    );
+
+create table user_booking(
+    	site_user varchar(30) not null,
+    	foreign key(site_user) REFERENCES users(email) on delete CASCADE on UPDATE CASCADE,
+        booking int(11) not null,
+    	foreign key(booking) REFERENCES bookings(id) on delete CASCADE on UPDATE CASCADE,
+    	PRIMARY key(site_user,booking)
+    );
+
+create table prod_order(
+    	product int(11) not null,
+    	foreign key(product) REFERENCES products(id) on delete CASCADE on UPDATE CASCADE,
+        site_order int(11) not null,
+    	foreign key(site_order) REFERENCES orders(id) on delete CASCADE on UPDATE CASCADE,
+    	PRIMARY key(product,site_order)
+    );
+
+CREATE TABLE prod_booking(
+    product INT(11) NOT NULL,
+    FOREIGN KEY(product) REFERENCES products(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    booking INT(11) NOT NULL,
+    FOREIGN KEY(booking) REFERENCES bookings(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY(product, booking)
+);
+
+create table cd_song(
+    	album int(11) not null,
+    	foreign key(album) REFERENCES cds(product) on delete CASCADE on UPDATE CASCADE,
+        song int(11) not null,
+    	foreign key(song) REFERENCES songs(id) on delete CASCADE on UPDATE CASCADE,
+    	PRIMARY key(album,song)
+    );
+
+create table vinil_song(
+    	album int(11) not null,
+    	foreign key(album) REFERENCES vinils(product) on delete CASCADE on UPDATE CASCADE,
+        song int(11) not null,
+    	foreign key(song) REFERENCES songs(id) on delete CASCADE on UPDATE CASCADE,
+    	PRIMARY key(album,song)
+    );
+
+create table film_actor(
+    	film int(11) not null,
+    	foreign key(film) REFERENCES films(product) on delete CASCADE on UPDATE CASCADE,
+        actor int(11) not null,
+    	foreign key(actor) REFERENCES actors(id) on delete CASCADE on UPDATE CASCADE,
+    	PRIMARY key(film,actor)
+    );
